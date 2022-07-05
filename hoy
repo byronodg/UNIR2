@@ -1,0 +1,131 @@
+console.log ("Hello World")
+
+d3.json ("https://gist.githubusercontent.com/double-thinker/817b155fd4fa5fc865f7b32007bd8744/raw/13068b32f82cc690fb352f405c69c156529ca464/partidos2.json").then (function (datosCompletos){
+    
+    
+    // NUEVA VARIABLE CON LA INFO DE PARTIDOS DEL NUEVO DATASET
+    var datosPartidos = datosCompletos.partidos
+    
+    
+    console.log (datosPartidos.length)
+    
+    
+    
+    var height=600;
+    var width=400;
+    
+       var margin  = {
+        top: 20,
+        botton: 50,
+        left:40,
+        right:50
+            
+    }
+       
+
+    
+     var escalaX = d3.scaleLinear()
+        .domain ([1,10])
+        .range ([0 + margin.left, width - margin.right])
+    
+    
+    var escalaY= d3.scaleLinear()
+       
+        .domain (d3.extent(datosPartidos, d => d.votantes))
+        .range ([height - margin.botton, 0 + margin.top])
+    
+ var escalaColor= d3.scaleLinear()
+ .domain(d3.extent(datosPartidos, d=>d.votantes))
+ .range(['red','green'])
+    
+ 
+   var escala_tamanio = d3.scaleLinear()
+        .domain(d3.extent(datosPartidos, d => d.votantes))
+        .range([8,20])
+         
+    
+var grafica=d3.select('body').append('svg')
+    .attr('height',height)
+    .attr('width',width)
+
+   
+   var tooltip = d3.select ("body")
+        .append("div")
+        .attr("class","tooltip")
+     
+       
+ var aparece=function(d){
+        
+     d3.select(this).attr('fill','orange')
+
+     tooltip
+         .text (d.partido)
+         .style ("top", d3.event.pageY + "px")  // TçE DA LA POSICION DONDE SE HA PRODUCIDO EL EVENTO
+         .style ("left", d3.event.pageX + "px")
+         .style("opacity",1)
+            // PARA QUE LA APRICION DEL TOOLTIP NO SEA BRUSCA
+       
+    }
+        
+var deaparece= function (d){
+           tooltip
+               .style("opacity",0)
+            d3.select(this).attr('fill',escalaColor(d.votantes))
+    }
+     
+     
+   grafica.selectAll('circle')
+    .data(datosPartidos)
+    .enter()
+    .append('circle')
+            .transition().ease (d3.easeBounce) 
+    .attr('r',d=>escala_tamanio(d.votantes))
+    .attr('cx',d => escalaX(d.mediaAutoubicacion)) //cuando es una funcion quie se llama se manda d => funcion (parametro)
+    .attr('cy',d => escalaY(d.votantes))
+    .attr('fill', d=>escalaColor(d.votantes))
+  .transition().ease (d3.easeLinear) .delay(500)
+       
+       
+       
+circulo=grafica.selectAll('circle').on ('mouseover',aparece)
+    .on('mouseout',
+               deaparece
+               
+       ) 
+            
+    /*.
+    
+    
+    */
+   
+    
+       // VISUALIZAMOS EJE X
+    var ejeX = d3.axisBottom (escalaX)
+    
+    // PONER TICKS
+       // .ticks (5)
+        //.tickFormat (d3.format(".3s"))
+    
+           
+    //Pintar eje X
+    grafica
+        .append("g")
+        .attr("transform","translate (0," + (height - 30) + ")")
+       
+       
+        .call(ejeX)
+              
+              
+    // VISUALIZAMOS EJE Y
+    var ejeY = d3.axisLeft (escalaY)  
+      grafica
+        //estas dos líneas antes del .call (ejeY). MUEVEN EL EJE 
+        .append("g")
+        .attr("transform","translate (40,0)")
+        .call(ejeY)
+    
+  
+   
+	
+    
+})
