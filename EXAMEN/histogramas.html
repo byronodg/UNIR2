@@ -1,0 +1,73 @@
+<html>
+    
+   <head>
+               <script src="https://d3js.org/d3.v5.min.js"></script>
+    
+    </head>
+    <body>
+        <script>
+            var datos=[
+                {'pais':'EEUU', 'monto':250},
+                {'pais':'UK', 'monto':80}
+                
+            ]
+           
+            var height=650
+            var width=450
+            
+            
+            grafica=d3.select('body').append('svg')
+            .attr('width',width)
+            .attr('height',height)
+            
+            //grafica.append('circle').attr('cx',10).attr('cy',120).attr('r',10).attr('fill','red')
+            
+            var escalaX=d3.scaleLinear()
+            .domain([1,2])
+            .range([20,300])
+            
+            
+            
+            var escalaY=d3.scaleLinear()
+            .domain([0,250])
+            .range([0,300])
+            
+            var escalaY1=d3.scaleLinear()
+            .domain([0,250])
+            .range([300,0])
+           
+            
+                x1 =  d3.scaleBand()        
+    .domain(datos.map(d => d.pais))            
+    .range([80, 360])
+    .padding(0.1)
+            
+               
+                x2 =  d3.scaleBand()        
+    .domain(datos.map(d => d.pais))            
+    .range([0, 280])
+    .padding(0.1)
+            
+            
+           
+                 grafica.selectAll('rect').data(datos)
+                     .join('rect')
+            .attr('x',d=>x1(d.pais))
+            .attr('y',d=>height-20-escalaY(d.monto))
+            .attr('width',20)
+            .attr('height',d=>escalaY(d.monto))
+             
+           
+            
+        
+            
+            
+            grafica.append('g').attr('transform','translate(30,630)').call(d3.axisBottom(x2) .ticks(5))     
+            
+            grafica.append('g').attr('transform','translate(30,330)').call(d3.axisLeft(escalaY1) )     
+        </script>
+    
+    
+    </body>
+    
+</html>

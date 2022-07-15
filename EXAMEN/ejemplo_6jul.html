@@ -1,0 +1,122 @@
+<html>
+    
+    <head>
+       <script src="https://d3js.org/d3.v5.min.js"></script>
+    </head>
+    
+    <body>
+        <script>
+            
+            var datos_totales={paises:[
+                {'pais':'EEUU', 'poblacion':300, 'PIB':20},
+                {'pais':'UK', 'poblacion':65, 'PIB':3},
+                {'pais':'Alemania', 'poblacion':85, 'PIB':4.5},
+                {'pais':'Japon', 'poblacion':150, 'PIB':4.8},
+                {'pais':'China', 'poblacion':1200, 'PIB':17},
+                 {'pais':'Ecuador', 'poblacion':17, 'PIB':0.1}],
+                historial:{
+                    'EEUU':[
+                       {'anio':2020,
+                       'muertes':500},
+                        {'anio':2021,
+                       'muertes':100}
+                       
+                      ]
+                               }
+            }
+            
+            datos=datos_totales.paises
+           
+            datos1=datos_totales.historial
+            
+            
+            
+            margin={
+                top:20,
+                bottom:20,
+                left:20,
+                right:20
+            }
+           
+            
+            escalaX=d3.scaleLinear()
+                    .domain(d3.extent(datos, d=>d.poblacion))
+                    .range([0+margin.left, 450-margin.right])
+            escalaY=d3.scaleLinear()
+                    .domain(d3.extent(datos, d=>d.PIB))
+                    .range([600-margin.bottom, margin.top])
+            
+            escalaTamanio=d3.scaleLinear()
+                    .domain(d3.extent(datos, d=>d.PIB))
+                    .range([2,20])
+            
+            
+            tooltip=d3.select('body').append('div').style('position','absolute').style('background','aqua').style('pointer-events','none')
+            
+           var aparece=function  (d){
+               console.log(d)
+              //  d3.select(this).attr('fill','orange')
+               console.log('OBJET'+d)
+                tooltip.transition().ease(d3.easeLinear) .delay(200).text('Pais:'+d.pais+', Población(Millones):'+d.poblacion+ ' PIB(Billones de $):'+d.PIB)
+                    .style('Top',d3.event.pageY+'px')
+                    .style('Left',d3.event.pageX+'px')
+                    .style('opacity',1)
+            }
+           
+           var consolidado=function  (d){
+               d3.select(this).attr('fill','orange')
+               aparece(d)
+               imprime(d)
+              
+            }
+           
+            var deaparece=function(d){
+                d3.select(this).attr('fill','red')
+                tooltip.style('opacity',0)
+            }
+            
+            
+            
+            
+            grafica=d3.select('body').append('svg')
+            .attr('height',600)
+            .attr('width',450)
+            
+            grafica.selectAll('circle')
+                .data(datos)
+                .enter()
+                .append('circle')
+            .transition().ease (d3.easeLinear) .delay(200)
+                .attr('r',d=>escalaTamanio(d.PIB))
+                .attr('cx',d=>escalaX(d.poblacion))
+                .attr('cy',d=>escalaY(d.PIB))
+                .attr('fill','red')
+                
+            
+            circulos=grafica.selectAll('circle')
+                .on('mouseover',consolidado
+                   )
+                .on('mouseout',deaparece)
+            
+            //Ejes
+            grafica.append('g').attr('transform','translate(0,580)').call(d3.axisBottom(escalaX))
+          
+            grafica.append('g').attr('transform','translate(20,0)').call(d3.axisLeft(escalaY))
+          
+            
+            
+            
+            
+            var imprime =function (d){
+                grafica1=d3.select('body').append('svg').attr('height',500).attr('width',400)
+                grafica1.selectAll('circle').data(datos1.EEUU).enter().append('circle').attr('r',10).attr('cx',400).attr('cy',20).attr('fill','green')
+                
+               
+                
+            }
+            
+        </script>
+    </body>
+    
+    
+</html>
