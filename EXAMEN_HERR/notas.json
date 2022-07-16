@@ -1,7 +1,7 @@
 [
   {"alumno":"Byron","nota":10,"ranking":1},
   {"alumno":"Juan","nota":9,"ranking":50},
-  {"alumno":"Ana","nota":9,"ranking":100},
+  {"alumno":"Ana","nota":9.5,"ranking":100},
   {"alumno":"Juan","nota":8,"ranking":150},
   {"alumno":"José","nota":7,"ranking":180},
   {"alumno":"Guillermo","nota":6,"ranking":200},
